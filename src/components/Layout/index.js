@@ -1,11 +1,10 @@
 import layoutStyle from './style.module.css';
 
-const Layout = ({ id, title, descr, urlBg, colorBg }) => {
+const Layout = ({ id, title, urlBg, colorBg, children }) => {
 
     const style = {
         backgroundImage: urlBg ? `url(${urlBg})` : 'none',
-        backgroundColor: colorBg ? colorBg : 'transparent',
-        backgroundColor: colorBg ? colorBg : 'transparent',
+        backgroundColor: colorBg ? colorBg : 'transparent'
     }
 
     return (
@@ -19,7 +18,7 @@ const Layout = ({ id, title, descr, urlBg, colorBg }) => {
                     <span className={layoutStyle.separator}></span>
                 </div>
                 <div className={layoutStyle.desc + ' ' + layoutStyle.full}>
-                    {descr && (<p>{descr}</p>)}
+                    {children}
                 </div>
             </div>
         </section>

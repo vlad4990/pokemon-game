@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import cn from 'classnames';
 
 import pokemonCardStyle from './style.module.css';
 
@@ -7,19 +8,19 @@ const PokemonCard = ({name, img, id, type, values}) => {
     const [isActive, setActive] = useState(false)
 
     const handkeClick = () => {
-        setActive(true);
+        setActive(!isActive);
     }
     return (
         <div className={pokemonCardStyle.root} onClick={handkeClick}>
-            <div className={`${pokemonCardStyle.pokemonCard} ${isActive ? pokemonCardStyle.active : ''}`}>
+            <div className={cn(pokemonCardStyle.pokemonCard, {[pokemonCardStyle.active]: isActive})}>
                 <div className={pokemonCardStyle.cardFront}>
-                    <div className={`${pokemonCardStyle.wrap} ${pokemonCardStyle.front}`}>
-                        <div className={`${pokemonCardStyle.pokemon} ${pokemonCardStyle[type]}` }>
+                    <div className={cn(pokemonCardStyle.wrap, pokemonCardStyle.front)}>
+                        <div className={cn(pokemonCardStyle.pokemon, pokemonCardStyle[type])}>
                             <div className={pokemonCardStyle.values}>
-                                <div className={`${pokemonCardStyle.count} ${pokemonCardStyle.top}`}>{values.top}</div>
-                                <div className={`${pokemonCardStyle.count} ${pokemonCardStyle.right}`}>{values.right}</div>
-                                <div className={`${pokemonCardStyle.count} ${pokemonCardStyle.bottom}`}>{values.bottom}</div>
-                                <div className={`${pokemonCardStyle.count} ${pokemonCardStyle.left}`}>{values.left}</div>
+                                <div className={cn(pokemonCardStyle.count, pokemonCardStyle.top)}>{values.top}</div>
+                                <div className={cn(pokemonCardStyle.count, pokemonCardStyle.right)}>{values.right}</div>
+                                <div className={cn(pokemonCardStyle.count, pokemonCardStyle.bottom)}>{values.bottom}</div>
+                                <div className={cn(pokemonCardStyle.count, pokemonCardStyle.left)}>{values.left}</div>
                             </div>
                             <div className={pokemonCardStyle.imgContainer}>
                                 <img src={img} alt={name} />
@@ -38,7 +39,7 @@ const PokemonCard = ({name, img, id, type, values}) => {
                 </div>
 
                 <div className={pokemonCardStyle.cardBack}>
-                    <div className={`${pokemonCardStyle.wrap} ${pokemonCardStyle.back}`}>
+                    <div className={cn(pokemonCardStyle.wrap, pokemonCardStyle.back)}>
                         <img src={cardBackSide} alt="Сard Backed" />
                     </div>
                 </div>

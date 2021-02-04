@@ -1,8 +1,8 @@
+import {useState} from 'react';
 import Header from '../../components/Header';
 import Layout from '../../components/Layout';
-import Footer from '../../components/Footer';
 import PokemonCard from '../../components/PokemonCard';
-import MenuHeader from "../../components/MenuHeader";
+
 
 import appStyle from './style.module.css';
 
@@ -35,7 +35,8 @@ const POKEMONS = [
             "right": 2,
             "bottom": 7,
             "left": 5
-        }
+        },
+        "isActive": false
     },
     {
         "abilities": [
@@ -62,7 +63,8 @@ const POKEMONS = [
             "right": 9,
             "bottom": "A",
             "left": "A"
-        }
+        },
+        "isActive": false
     },
     {
         "abilities": [
@@ -88,7 +90,8 @@ const POKEMONS = [
             "right": "A",
             "bottom": 9,
             "left": 6
-        }
+        },
+        "isActive": false
     },
     {
         "abilities": [
@@ -114,7 +117,8 @@ const POKEMONS = [
             "right": 4,
             "bottom": 2,
             "left": 7
-        }
+        },
+        "isActive": false
     },
     {
         "abilities": [
@@ -140,22 +144,32 @@ const POKEMONS = [
             "right": 6,
             "bottom": 1,
             "left": 4
-        }
+        },
+        "isActive": false
     }
 ];
 
-const HomePage = ({ onChangePage }) => {
-    const handleClickButton = (page) => {
-        console.log('####: <HomePage />');
-        onChangePage && onChangePage(page);
-    }
+const HomePage = () => {
+    const [pokemons, setPokemons] = useState(POKEMONS);
+    const onCardClick = (id) => {
+        setPokemons((pokemons) => {
+            const index = pokemons.findIndex((el) => el.id === id);
+            const oldItem = pokemons[index];
+            const newItem = { ...oldItem, isActive: !oldItem.isActive};
+            const newArray = [
+                ...pokemons.slice(0,index),
+                newItem,
+                ...pokemons.slice(index + 1),
+            ];
+            return newArray;
+        });
+    };
     return (
         <>
-            <MenuHeader/>
             <Header
-                title = 'Hello'
-                descr = 'description Header'
-                onClickButton = {handleClickButton}
+                title = 'Pokemon Game'
+                descr = 'This is a card game about pokemon'
+                // onClickButton = {handleClickButton}
             />
             <Layout
                 title = 'Layout title 1'
@@ -173,13 +187,15 @@ const HomePage = ({ onChangePage }) => {
             >
                 <div className={appStyle.flex}>
                     {
-                        POKEMONS.map((item,index) => <PokemonCard
+                        pokemons.map((item,index) => <PokemonCard
                             name={item.name}
                             img={item.img}
                             id={item.id}
                             type={item.type}
                             values={item.values}
                             key={item.id}
+                            isActive={item.isActive}
+                            onCardClick={onCardClick}
                         />)
                     }
                 </div>
@@ -191,7 +207,6 @@ const HomePage = ({ onChangePage }) => {
             >
                 <p>To win, a majority of the total ten cards played (including the one card that is not placed on the board) must be of the player's card color. To do this, the player must capture cards by placing a card adjacent to an opponent's card whereupon the 'ranks' of the sides where the two cards touch will be compared. If the rank of the opponent's card is higher than the player's card, the player's card will be captured and turned into the opponent's color. If the player's rank is higher, the opponent's card will be captured and changed into the player's color instead. </p>
             </Layout>
-            <Footer/>
         </>
     );
 }

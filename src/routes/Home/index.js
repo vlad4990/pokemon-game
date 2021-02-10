@@ -187,16 +187,17 @@ const HomePage = () => {
             >
                 <div className={appStyle.flex}>
                     {
-                        pokemons.map((item,index) => <PokemonCard
-                            name={item.name}
-                            img={item.img}
-                            id={item.id}
-                            type={item.type}
-                            values={item.values}
-                            key={item.id}
-                            isActive={item.isActive}
-                            onCardClick={onCardClick}
-                        />)
+                        Object.entries(pokemons).map(([key,{name, img, id, type, values, isActive}]) => (
+                            <PokemonCard
+                                name={name}
+                                img={img}
+                                id={id}
+                                type={type}
+                                values={values}
+                                key={key}
+                                isActive={isActive}
+                                onCardClick={onCardClick}
+                            />))
                     }
                 </div>
             </Layout>

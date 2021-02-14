@@ -35,10 +35,10 @@ const DATA = {
 
 const GamePage = () => {
     const firebase = useContext(FireBaseContext);
-    const SelectedContext = useContext(PokemonContext);
+    const pokemonsContext = useContext(PokemonContext);
     const [pokemons, setPokemons] = useState({});
-    console.log('####: firebase', firebase, "Sel",SelectedContext);
-    // const history = useHistory();
+    console.log('####: firebase', firebase, "Sel",pokemonsContext);
+    const history = useHistory();
 
     const getPokemons = async () => {
         const response = await firebase.getPokemonsOnce();
@@ -53,6 +53,7 @@ const GamePage = () => {
         firebase.getPokemonSocket((pokemons) => {
             setPokemons(pokemons);
         });
+        return () => firebase.offPokemonSocket();
     }, []);
 
     // const handleClickButton = () => {
@@ -74,30 +75,21 @@ const GamePage = () => {
         // );
     }
 
-    const onCardClick = (id) => {
-        setPokemons(prevState => {
-            return Object.entries(prevState).reduce((acc, item) => {
-                let pokemon = {...item[1]};
-                if(pokemon.id === id && !pokemon.isSelected){
-                    pokemon.isSelected = true;
-                    pushToContext(item);
-                };
-                // if (pokemon.id === id) {
-                //     pokemon.isActive = !pokemon.isActive;
-                // };
+    const handleChangeSelected = (key) => {
+        const pokemon =  {...pokemons[key]};
+        pokemonsContext.onSelectedPokemons(key, pokemon);
 
-                acc[item[0]] = pokemon;
-                console.log("клик по карте");
-                // firebase.postPokemon(item[0], pokemon);
-                // database.ref('pokemons/'+ item[0]).set(pokemon);
-
-                return acc;
-            }, {});
-        });
-    };
+        setPokemons(prevState => ({
+            ...prevState,
+            [key]: {
+                ...prevState[key],
+                selected: !prevState[key].selected,
+            }
+        }))
+    }
 
     const pushToContext = (val) => {
-        SelectedContext.pokemon.push(val);
+        pokemonsContext.pokemon.push(val);
         console.log("Пуш покемона");
     }
 
@@ -117,6 +109,10 @@ const GamePage = () => {
     //     });
     // };
 
+    const handleStartGameClick = () => {
+        history.push('/game/board')
+    }
+
     return (
         <div>
             <p> This is Game Page!!!</p>
@@ -125,15 +121,22 @@ const GamePage = () => {
                 <button onClick={addNewPokemon}>
                     Добавить покемона
                 </button>
-                <Link to={'/game/board'}>
+
+            </div>
+            <div className={s.buttonWrap}>
+                <button
+                    onClick={handleStartGameClick}
+                    disabled={Object.keys(pokemonsContext.pokemons).length < 5}
+                >
                     Начать игру
-                </Link>
+                </button>
             </div>
             <Layout>
                 <div className={s.flex}>
                     {
-                        Object.entries(pokemons).map(([key,{name, img, id, type, values, isSelected}]) => (
+                        Object.entries(pokemons).map(([key,{name, img, id, type, values, selected}]) => (
                             <PokemonCard
+                                className={s.card}
                                 name={name}
                                 img={img}
                                 id={id}
@@ -141,9 +144,12 @@ const GamePage = () => {
                                 values={values}
                                 key={key}
                                 isActive={true}
-                                minimize
-                                className={s.selected}
-                                onCardClick={onCardClick}
+                                isSelected={selected}
+                                onCardClick={() => {
+                                    if (Object.keys(pokemonsContext.pokemons).length < 5 || selected) {
+                                        handleChangeSelected(key)
+                                    }
+                                }}
                             />
                         ))
                     }

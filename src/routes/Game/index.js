@@ -18,14 +18,29 @@ import {PokemonContext} from "../../context/PokemonContext";
 
 const GamePage = () => {
     const match = useRouteMatch();
-    const [pokemon, setPokemon] = useState([])
+    const [selectedPokemons, setSelectedPokemons] = useState({})
 
-    const handleSelect = (val) => {
-        setPokemon(val)
+    const handleSelectedPokemons = (key, pokemon) => {
+        setSelectedPokemons(prevState => {
+            if (prevState[key]) {
+                const copyState = {...prevState};
+                delete copyState[key];
+
+                return copyState
+            }
+
+            return {
+                ...prevState,
+                [key]: pokemon,
+            }
+        })
     }
 
     return (
-        <PokemonContext.Provider value={{pokemon, isSelect: handleSelect }}>
+        <PokemonContext.Provider value={{
+            pokemons: selectedPokemons,
+            onSelectedPokemons: handleSelectedPokemons
+        }}>
             <Switch>
                 <Route path={`${match.path}/`} exact component={StartPage} />
                 <Route path={`${match.path}/board`} component={BoardPage} />
